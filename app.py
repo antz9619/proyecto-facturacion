@@ -107,20 +107,17 @@ def procesar_archivo():
         df['DIFERENCIA'] = df['Precio Unitario'] - df['RANGO PRECIO A COBRAR']
         df['REVISIÓN'] = df['DIFERENCIA'].apply(lambda x: "ok" if x == 0 else "Validar con el courier el cobro")
 
-        # Generar resumen
+        # Resumir las Diferencias por Zonas
         resumen = df.groupby('Descripcion').agg(
             Total_Negativas=('DIFERENCIA', lambda x: x[x < 0].sum()),
             Total_Positivas=('DIFERENCIA', lambda x: x[x > 0].sum()),
             Total_OK=('REVISIÓN', lambda x: (x == "ok").sum())
         ).reset_index()
 
-        # Guardar resultados
-        nombre_base = archivo.filename.split('.')[0]
-        archivo_procesado = f"{nombre_base}_procesado.xlsx"
-        archivo_resumen = f"{nombre_base}_resumen.xlsx"
-        
-        df.to_excel(archivo_procesado, index=False)
-        resumen.to_excel(archivo_resumen, index=False)
+        # Guardar los datos procesados y el resumen en un único archivo Excel
+        with pd.ExcelWriter("facturacion_procesada.xlsx", engine="openpyxl") as writer:
+            df.to_excel(writer, sheet_name="Datos Procesados", index=False)
+            resumen.to_excel(writer, sheet_name="Resumen", index=False)
 
         return f'''
      <!DOCTYPE html>
@@ -190,8 +187,7 @@ def procesar_archivo():
         <div class="container">
             <h1>Archivo procesado con éxito</h1>
             <p>Tu archivo ha sido procesado. Puedes descargar los resultados a continuación.</p>
-            <a href="/descargar/{archivo_procesado}">Descargar archivo procesado</a>
-            <a href="/descargar/{archivo_resumen}">Descargar resumen de diferencias</a>
+            <a href="/descargar/facturacion_procesada.xlsx">Descargar archivo procesado</a>
             <button onclick="window.location.href='/'">Volver al formulario</button>
         </div>
     </body>
