@@ -107,19 +107,19 @@ def procesar_archivo():
         df['DIFERENCIA'] = df['Precio Unitario'] - df['RANGO PRECIO A COBRAR']
         df['REVISIÓN'] = df['DIFERENCIA'].apply(lambda x: "ok" if x == 0 else "Validar con el courier el cobro")
 
-        # Resumir las Diferencias por Zonas
-        resumen = df.groupby('Descripcion').agg(
-            Total_Negativas=('DIFERENCIA', lambda x: x[x < 0].sum()),
-            Total_Positivas=('DIFERENCIA', lambda x: x[x > 0].sum()),
-            Total_OK=('REVISIÓN', lambda x: (x == "ok").sum())
-        ).reset_index()
+        # Validar datos repetidos en la columna "Guia"
+        df['Repetido'] = df['Guia'].duplicated(keep=False)  # Marca duplicados como True
+        repetidos = df[df['Repetido']]['Guia'].value_counts()  # Conteo de valores repetidos
+        repetidos_df = repetidos.reset_index()  # Convertir a DataFrame
+        repetidos_df.columns = ['Guia Repetida', 'Cantidad']
 
         # Calcular totales y agregar la fila de totales al resumen
         totales = {
             'Descripcion': 'Total',
             'Total_Negativas': resumen['Total_Negativas'].sum(),
             'Total_Positivas': resumen['Total_Positivas'].sum(),
-            'Total_OK': resumen['Total_OK'].sum()
+            'Total_OK': resumen['Total_OK'].sum(),
+            'Total_Repetidos': resumen['Total_Repetidos'].sum()
         }
         resumen = pd.concat([resumen, pd.DataFrame([totales])], ignore_index=True)
 
