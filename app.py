@@ -114,14 +114,18 @@ def procesar_archivo():
             Total_OK=('REVISIÓN', lambda x: (x == "ok").sum())
         ).reset_index()
 
+        # Generar nombre de archivo basado en el original
+        nombre_original = os.path.splitext(archivo.filename)[0]
+        nombre_procesado = f"{nombre_original}_procesado.xlsx"
+
         # Guardar los datos procesados y el resumen en un único archivo Excel
-        with pd.ExcelWriter("facturacion_procesada.xlsx", engine="openpyxl") as writer:
+        with pd.ExcelWriter(nombre_procesado, engine="openpyxl") as writer:
             df.to_excel(writer, sheet_name="Datos Procesados", index=False)
             resumen.to_excel(writer, sheet_name="Resumen", index=False)
 
         return f'''
      <!DOCTYPE html>
-    <html lang="en">
+    <html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -187,7 +191,7 @@ def procesar_archivo():
         <div class="container">
             <h1>Archivo procesado con éxito</h1>
             <p>Tu archivo ha sido procesado. Puedes descargar los resultados a continuación.</p>
-            <a href="/descargar/facturacion_procesada.xlsx">Descargar archivo procesado</a>
+            <a href="/descargar/{nombre_procesado}">Descargar archivo procesado</a>
             <button onclick="window.location.href='/'">Volver al formulario</button>
         </div>
     </body>
