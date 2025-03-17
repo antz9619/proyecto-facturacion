@@ -114,6 +114,15 @@ def procesar_archivo():
             Total_OK=('REVISIÓN', lambda x: (x == "ok").sum())
         ).reset_index()
 
+        # Calcular totales y agregar la fila de totales al resumen
+        totales = {
+            'Descripcion': 'Total',
+            'Total_Negativas': resumen['Total_Negativas'].sum(),
+            'Total_Positivas': resumen['Total_Positivas'].sum(),
+            'Total_OK': resumen['Total_OK'].sum()
+        }
+        resumen = pd.concat([resumen, pd.DataFrame([totales])], ignore_index=True)
+
         # Generar nombre de archivo basado en el original
         nombre_original = os.path.splitext(archivo.filename)[0]
         nombre_procesado = f"{nombre_original}_procesado.xlsx"
