@@ -70,7 +70,7 @@ def procesar_archivo():
         'Zo': 'Zo',
         'Alto': 'Alto',
         'Ancho': 'Ancho',
-        'Largo': 'Largo',
+        'Largo': 'Largo',   
         'Precio Unitario': 'Precio Unitario',
         'Guia': 'Guia'  # Incluir la columna "Guia" para validar duplicados
         }
@@ -110,9 +110,14 @@ def procesar_archivo():
 
         # Validar datos repetidos en la columna "Guia"
         df['Repetido'] = df['Guia'].duplicated(keep=False)  # Marca duplicados como True
-        repetidos = df[df['Repetido']]['Guia'].value_counts()  # Conteo de valores repetidos
-        repetidos_df = repetidos.reset_index()  # Convertir a DataFrame
-        repetidos_df.columns = ['Guia Repetida', 'Cantidad']
+
+        # Resumir las Diferencias por Zonas y agregar recuento de duplicados
+        resumen = df.groupby('Descripcion').agg(
+            Total_Negativas=('DIFERENCIA', lambda x: x[x < 0].sum()),
+            Total_Positivas=('DIFERENCIA', lambda x: x[x > 0].sum()),
+            Total_OK=('REVISIÓN', lambda x: (x == "ok").sum()),
+            Total_Repetidos=('Guia', lambda x: x.duplicated(keep=False).sum())  # Contar duplicados en "Guia"
+        ).reset_index()
 
         # Calcular totales y agregar la fila de totales al resumen
         totales = {
