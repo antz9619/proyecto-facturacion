@@ -72,7 +72,7 @@ def procesar_archivo():
         'Ancho': 'Ancho',
         'Largo': 'Largo',   
         'Precio Unitario': 'Precio Unitario',
-        'Guia': 'Guia'  # Incluir la columna "Guia" para validar duplicados
+        'G u i a': 'G u i a'  # Incluir la columna "Guia" para validar duplicados
         }
         
         # Renombrar columnas según necesidad
@@ -81,7 +81,7 @@ def procesar_archivo():
                 df.rename(columns={original: nuevo}, inplace=True)
         
         # Verificar columnas esenciales
-        columnas_esenciales = ['GramRea', 'Zo', 'Alto', 'Ancho', 'Largo', 'Precio Unitario', 'Guia']
+        columnas_esenciales = ['GramRea', 'Zo', 'Alto', 'Ancho', 'Largo', 'Precio Unitario', 'G u i a']
         for col in columnas_esenciales:
             if col not in df.columns:
                 return f"Error: Falta la columna requerida: {col}"
@@ -109,14 +109,14 @@ def procesar_archivo():
         df['REVISIÓN'] = df['DIFERENCIA'].apply(lambda x: "ok" if x == 0 else "Validar con el courier el cobro")
 
         # Validar datos repetidos en la columna "Guia"
-        df['Repetido'] = df['Guia'].duplicated(keep=False)  # Marca duplicados como True
+        df['Repetido'] = df['G u i a'].duplicated(keep=False)  # Marca duplicados como True
 
         # Resumir las Diferencias por Zonas y agregar recuento de duplicados
         resumen = df.groupby('Descripcion').agg(
             Total_Negativas=('DIFERENCIA', lambda x: x[x < 0].sum()),
             Total_Positivas=('DIFERENCIA', lambda x: x[x > 0].sum()),
             Total_OK=('REVISIÓN', lambda x: (x == "ok").sum()),
-            Total_Repetidos=('Guia', lambda x: x.duplicated(keep=False).sum())  # Contar duplicados en "Guia"
+            Total_Repetidos=('G u i a', lambda x: x.duplicated(keep=False).sum())  # Contar duplicados en "Guia"
         ).reset_index()
 
         # Calcular totales y agregar la fila de totales al resumen
