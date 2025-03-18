@@ -66,12 +66,13 @@ def procesar_archivo():
         
         # Validar columnas requeridas
         columnas_requeridas = {
-            'GramRea': 'GramRea',
-            'Zo': 'Zo',
-            'Alto': 'Alto',
-            'Ancho': 'Ancho',
-            'Largo': 'Largo',
-            'Precio Unitario': 'Precio Unitario'
+        'GramRea': 'GramRea',
+        'Zo': 'Zo',
+        'Alto': 'Alto',
+        'Ancho': 'Ancho',
+        'Largo': 'Largo',
+        'Precio Unitario': 'Precio Unitario',
+        'Guia': 'Guia'  # Incluir la columna "Guia" para validar duplicados
         }
         
         # Renombrar columnas según necesidad
@@ -80,7 +81,7 @@ def procesar_archivo():
                 df.rename(columns={original: nuevo}, inplace=True)
         
         # Verificar columnas esenciales
-        columnas_esenciales = ['GramRea', 'Zo', 'Alto', 'Ancho', 'Largo', 'Precio Unitario']
+        columnas_esenciales = ['GramRea', 'Zo', 'Alto', 'Ancho', 'Largo', 'Precio Unitario', 'Guia']
         for col in columnas_esenciales:
             if col not in df.columns:
                 return f"Error: Falta la columna requerida: {col}"
