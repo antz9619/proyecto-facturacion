@@ -67,10 +67,8 @@ def procesar_archivo():
         # Validar columnas requeridas
         columnas_requeridas = {
         'GramRea': 'GramRea',
-        'Zo': 'Zo',
-        'Alto': 'Alto',
-        'Ancho': 'Ancho',
-        'Largo': 'Largo',   
+        'GramAfo': 'GramAfo',  # Mantener esta columna para el cálculo del aforado
+        'Zo': 'Zo',  
         'Precio Unitario': 'Precio Unitario',
         'G u i a': 'G u i a'  # Incluir la columna "Guia" para validar duplicados
         }
@@ -81,14 +79,14 @@ def procesar_archivo():
                 df.rename(columns={original: nuevo}, inplace=True)
         
         # Verificar columnas esenciales
-        columnas_esenciales = ['GramRea', 'Zo', 'Alto', 'Ancho', 'Largo', 'Precio Unitario', 'G u i a']
+        columnas_esenciales = ['GramRea','GramAfo', 'Zo', 'Precio Unitario', 'G u i a']
         for col in columnas_esenciales:
             if col not in df.columns:
                 return f"Error: Falta la columna requerida: {col}"
 
         # Cálculos principales
         df['kilos PESO REAL'] = df['GramRea'] / 1000
-        df['PESO VOLUMETRICO'] = ((df['Alto']/10) * (df['Ancho']/10) * (df['Largo']/10)) / 4000 / 1000
+        df['PESO VOLUMETRICO'] = df['GramAfo'] / 1000
         df['PESO A LIQUIDAR'] = df[['kilos PESO REAL', 'PESO VOLUMETRICO']].max(axis=1)
         
         # Determinar rangos y precios
